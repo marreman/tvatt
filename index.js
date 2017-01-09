@@ -3,7 +3,6 @@ const Nightmare = require("nightmare")
 
 env.config()
 
-
 Nightmare({ show: true })
   .goto(process.env.URL)
   .type("input[name='_ctl0:ContentPlaceHolder1:tbUsername']", process.env.USERNAME)
@@ -16,16 +15,16 @@ Nightmare({ show: true })
   .wait("#_ctl0_ContentPlaceHolder1_infostatus input")
   .evaluate(() => {
     const candidates = document.querySelectorAll("#_ctl0_ContentPlaceHolder1_infostatus input")
-    const bookingTimeInputRegex = /_ctl0:ContentPlaceHolder1:(\d),(\d),(\d),/
+    const bookingTimeInputRegex = /_ctl0:ContentPlaceHolder1:(\d),\d,\d,/
     const createBookingTime = rawData => {
-      const [_, weekDay, timePeriod, machinePair] = rawData.name.match(bookingTimeInputRegex)
+      const [_0, weekDay] = rawData.name.match(bookingTimeInputRegex)
+      const [_1, timePeriod, title] = rawData.title.match(/^(\d\d:\d\d-\d\d:\d\d) \((.*)\)/)
 
       return {
         weekDay,
         timePeriod,
-        machinePair,
-        originalFormName: rawData.name,
-        text: rawData.title
+        available: title === "Ledigt",
+        originalFormName: rawData.name
       }
     }
 
